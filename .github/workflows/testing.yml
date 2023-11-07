@@ -1,0 +1,12 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+jobs:
+  container-test-job:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:bullseye-slim
+    steps:
+      - name: Check for dockerenv file
+        run: ls -la / && uname -a
