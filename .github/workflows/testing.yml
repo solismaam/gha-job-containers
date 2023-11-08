@@ -41,7 +41,7 @@ jobs:
           REPOSITORY: ${{ matrix.repository }}
           IMAGE_TAG: ${{ inputs.image-tag }}
         run: |
-          docker build --build-arg BUILD_TARGET=testing --tag $REPOSITORY:testing $PATH
+          docker build --build-arg BUILD_TARGET=testing --tag $REPOSITORY:testing ${{ matrix.path }}
           docker run --rm $REPOSITORY:testing
-          docker build --bulid-arg BUILD_TARGET=release --tag $REPOSITORY:$IMAGE_TAG $PATH
+          docker build --bulid-arg BUILD_TARGET=release --tag $REPOSITORY:$IMAGE_TAG ${{ matrix.path }}
           docker run --rm $REPOSITORY:$IMAGE_TAG
