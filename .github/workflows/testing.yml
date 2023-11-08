@@ -1,12 +1,46 @@
-name: CI
+name: Build and push images
+
 on:
-  push:
-    branches: [ main ]
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+        description: Github environment
+      image-tag:
+        type: string
+        required: true
+        description: Image tag for pushed image
+        default: latest
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
-  container-test-job:
+  build:
+    name: Build and push
     runs-on: ubuntu-latest
-    container:
-      image: debian:bullseye-slim
+    strategy:
+      matrix:
+        include:
+          - repository: nginx
+            path: ./nginx
+          - repository: gunicorn
+            path: ./gunicorn
+
+    environment: ${{ inputs.environment }}
+
     steps:
-      - name: Check for dockerenv file
-        run: ls -la / && uname -a
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Build and push images to Amazon ECR
+        env:
+          REPOSITORY: ${{ matrix.repository }}
+          IMAGE_TAG: ${{ inputs.image-tag }}
+        run: |
+          docker build --build-arg BUILD_TARGET=testing --tag $REPOSITORY:testing $PATH
+          docker run --rm $REPOSITORY:testing
+          docker build --bulid-arg BUILD_TARGET=release --tag $REPOSITORY:$IMAGE_TAG $PATH
+          docker run --rm $REPOSITORY:$IMAGE_TAG
