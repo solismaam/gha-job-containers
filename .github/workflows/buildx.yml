@@ -28,19 +28,26 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: gunicorn
+          load: true
           push: false
           tags: gunicorn:testing
           cache-from: type=gha
           cache-to: type=gha,mode=max
   
       - name: Run tests
-        run: docker run --rm gunicorn:testing
+        run: |
+          docker run --rm gunicorn:testing
 
       - name: Build release
         uses: docker/build-push-action@v5
         with:
           context: gunicorn
+          load: true
           push: false
           tags: gunicorn:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Run release
+        run: |
+          docker run --rm gunicorn:latest
