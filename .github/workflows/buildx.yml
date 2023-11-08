@@ -27,6 +27,8 @@ jobs:
       - name: Build testing
         uses: docker/build-push-action@v5
         with:
+          build-args: |
+            BUILD_TARGET=testing
           context: gunicorn
           load: true
           push: false
@@ -41,6 +43,8 @@ jobs:
       - name: Build release
         uses: docker/build-push-action@v5
         with:
+          build-args: |
+            BUILD_TARGET=release
           context: gunicorn
           load: true
           push: false
