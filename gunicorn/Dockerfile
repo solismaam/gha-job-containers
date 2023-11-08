@@ -1,4 +1,4 @@
-ARG BUILD_TARGET=${BUILD_TARGET}
+ARG BUILD_TARGET=${BUILD_TARGET:-default}
 
 FROM python:3.11-slim-bullseye AS runtime-base
 

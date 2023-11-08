@@ -14,16 +14,31 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build and push
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Build and push images to Amazon ECR
+      - name: Build and test images
+        env:
+          BUILD_TARGET: testing
         run: |
-          docker build --build-arg BUILD_TARGET=testing --tag gunicorn:testing gunicorn/
-          docker run --rm gunicorn:testing
-          docker build --build-arg BUILD_TARGET=release --tag gunicorn:release gunicorn/
-          docker run --rm gunicorn:release
+          docker-compose build gunicorn
+          docker-compose up --detach
+          docker-compose run --rm gunicorn
+          docker-compose down
+  # build:
+  #   name: Build and push
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Check out code
+  #       uses: actions/checkout@v4
+
+  #     - name: Build and push images to Amazon ECR
+  #       run: |
+  #         docker build --build-arg BUILD_TARGET=testing --tag gunicorn:testing gunicorn/
+  #         docker run --rm gunicorn:testing
+  #         docker build --build-arg BUILD_TARGET=release --tag gunicorn:release gunicorn/
+  #         docker run --rm gunicorn:release
